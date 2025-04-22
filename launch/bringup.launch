@@ -1,0 +1,30 @@
+<launch>
+    <!-- Start ROS communication between the robot's computer and nourrobot base -->
+    <node pkg="rosserial_python" name="rosserial_nour" type="serial_node.py" output="screen">
+        <param name="port" value="/dev/nourbase" />
+        <param name="baud" value="57600" />
+    </node>
+
+    <!-- IMU Relay and Filter -->
+    <include file="$(find nourrobot)/launch/include/imu/imu.launch" />
+
+    <!-- Publish nourrobot odometry -->
+    <node pkg="nourrobot" name="nour_base_node" type="nour_base_node"></node>
+
+    <!-- Publish static transform from base_footprint to base_link -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_footprint_to_base_link" args="0 0 0.06 0 0 0  /base_footprint /base_link"/>
+
+
+
+
+
+
+    <!-- Odom-IMU Extended Kalman Filter-->
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization"> 
+        <remap from="odometry/filtered" to="odom" />
+        <rosparam command="load" file="$(find nourrobot)/param/ekf/robot_localization.yaml" />
+    </node>
+    
+
+
+</launch>
