@@ -3,9 +3,5 @@
     "python.autoComplete.extraPaths": [
         "/home/amer/catkin_ws/devel/lib/python2.7/dist-packages",
         "/opt/ros/melodic/lib/python2.7/dist-packages"
-    ],
-    "python.analysis.extraPaths": [
-        "/home/amer/catkin_ws/devel/lib/python2.7/dist-packages",
-        "/opt/ros/melodic/lib/python2.7/dist-packages"
     ]
 }

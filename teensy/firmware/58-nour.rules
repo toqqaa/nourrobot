@@ -1,1 +1,0 @@
-KERNEL=="ttyACM?", SUBSYSTEM=="tty", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="0483", ATTRS{serial}=="3655780", MODE="0666" SYMLINK+="nourbase"
