@@ -1,11 +1,11 @@
 <?xml version='1.0'?>
 
 <robot name="noor_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <link name="robot_footprint">
+  <link name="base_footprint">
   </link>
   
-  <joint name="robot_footprint_joint" type="fixed">
-      <parent link="robot_footprint"/>
+  <joint name="base_footprint_joint" type="fixed">
+      <parent link="base_footprint"/>
       <child link="base_link"/>
   </joint>
 
