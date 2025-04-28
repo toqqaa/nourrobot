@@ -1,90 +1,75 @@
 #include <ros/ros.h>
 #include <std_msgs/Float32MultiArray.h>
-#include <nour_msgs/Imu.h>
-#include <geometry_msgs/Vector3.h>
-#include <tf2/LinearMath/Quaternion.h>
+#include "sensor_msgs/Imu.h"
 
-// TF broadcaster (optional - only if you need to publish the transform)
-#include <tf2_ros/transform_broadcaster.h>
-#include <geometry_msgs/TransformStamped.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 
 ros::Publisher imu_pub;
-nour_msgs::Imu imu_data;
+ros::Subscriber imu_raw_sub;
+sensor_msgs::Imu imu_data;
+ros::Time current_time, last_time;
 
-// Frame ID configuration
-std::string imu_frame_id = "imu_link";  // Make this configurable
+// Create a Quaternion
+tf2::Quaternion quaternion;
+
+double roll = 0.0;  // roll angle
+double pitch = 0.0; // pitch angle
+double yaw = 0.0;   //  yaw angle
+
+double linear_acc_x = 0.0;  // roll angle
+double linear_acc_y = 0.0; // pitch angle
+double linear_acc_z = 0.0;   //  yaw angle
 
 void IMUCallback(const std_msgs::Float32MultiArray::ConstPtr &raw_imu_msg)
 {
-    // Process IMU data
-    double yaw = raw_imu_msg->data[0];
-    double pitch = raw_imu_msg->data[1];
-    double roll = raw_imu_msg->data[2];
 
-    // Create message
-    nour_msgs::Imu imu_msg;
-    
-    // Set header
-    imu_msg.header.stamp = ros::Time::now();
-    imu_msg.header.frame_id = imu_frame_id;
+  yaw = raw_imu_msg->data[0];
+  pitch = raw_imu_msg->data[1];
+  roll = raw_imu_msg->data[2];
 
-    // Set linear acceleration (example values)
-    geometry_msgs::Vector3 linear_acc;
-    linear_acc.x = 0;  // Replace with actual values
-    linear_acc.y = 0;
-    linear_acc.z = 1;
-    imu_msg.linear_acceleration = linear_acc;
-
-    // Set angular velocity (example values)
-    geometry_msgs::Vector3 angular_vel;
-    angular_vel.x = 0;  // Replace with actual values
-    angular_vel.y = 0;
-    angular_vel.z = 0;
-    imu_msg.angular_velocity = angular_vel;
-
-    // Set magnetic field (example values)
-    geometry_msgs::Vector3 mag_field;
-    mag_field.x = 0;  // Replace with actual values
-    mag_field.y = 0;
-    mag_field.z = 0;
-    imu_msg.magnetic_field = mag_field;
-
-    // Publish the message
-    imu_pub.publish(imu_msg);
-
-    // Optional: Publish TF transform
-    static tf2_ros::TransformBroadcaster br;
-    geometry_msgs::TransformStamped transform;
-    transform.header.stamp = ros::Time::now();
-    transform.header.frame_id = "base_link";  // Parent frame
-    transform.child_frame_id = imu_frame_id;
-    
-    // Set transform (identity by default)
-    transform.transform.translation.x = 0.0;
-    transform.transform.translation.y = 0.0;
-    transform.transform.translation.z = 0.0;
-    
-    tf2::Quaternion q;
-    q.setRPY(roll, pitch, yaw);
-    transform.transform.rotation.x = q.x();
-    transform.transform.rotation.y = q.y();
-    transform.transform.rotation.z = q.z();
-    transform.transform.rotation.w = q.w();
-    
-    br.sendTransform(transform);
+  linear_acc_x= 0;
+  linear_acc_y=0;
+  linear_acc_z=1;
 }
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "imu_publisher");
-    ros::NodeHandle nh;
-    
-    // Get frame_id from parameter server if available
-    nh.param<std::string>("imu_frame_id", imu_frame_id, "imu_link");
 
-    imu_pub = nh.advertise<nour_msgs::Imu>("imu_data", 10);
-    ros::Subscriber imu_sub = nh.subscribe("raw_imu", 10, IMUCallback);
+  ros::init(argc, argv, "imu_publisher");
+  ros::NodeHandle nh;
 
-    ros::spin();
-    return 0;
+  imu_raw_sub = nh.subscribe("imu_raw", 50, IMUCallback);
+  imu_pub = nh.advertise<sensor_msgs::Imu>("imu", 50);
+
+  current_time = ros::Time::now();
+  last_time = ros::Time::now();
+  ros::Rate loop_rate(50);
+  while (ros::ok())
+  {
+    ros::spinOnce();
+
+    // Set the quaternion using Euler angles
+    quaternion.setRPY(roll, pitch, yaw);
+
+    imu_data.orientation.x = quaternion.x();
+    imu_data.orientation.y = quaternion.y();
+    imu_data.orientation.z = quaternion.z();
+    imu_data.orientation.w = quaternion.w();
+
+    imu_data.linear_acceleration.x=linear_acc_x;
+    imu_data.linear_acceleration.y=linear_acc_y;
+    imu_data.linear_acceleration.z=linear_acc_z;
+
+    imu_data.header.frame_id = "imu_link";
+    current_time = ros::Time::now();
+
+    imu_data.header.stamp = current_time;
+    imu_pub.publish(imu_data);
+    last_time = current_time;
+
+    loop_rate.sleep();
+  }
+
+  return 0;
 }
