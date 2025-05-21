@@ -43,7 +43,7 @@
         <rosparam command="load" file="$(find noor_bringup)/param/ekf_localization.yaml" />
     </node>
 
-    <include file="$(find rplidar_ros)/launch/rplidar_a2m8.launch"/>
+    <include file="$(find rplidar)/launch/rplidar_a2m8.launch"/>
 
   
 </launch>
