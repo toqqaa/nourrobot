@@ -1,0 +1,7 @@
+<launch>
+
+    <node name="noor_control" pkg="noor_control" type="noor_control_manager.py" output="screen"/>
+  
+  
+  </launch>
+  

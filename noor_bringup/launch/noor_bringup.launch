@@ -42,7 +42,18 @@
         <rosparam command="load" file="$(find noor_bringup)/param/ekf_localization.yaml" />
     </node>
 
+
+    <!-- rp-lidar-->
+
     <include file="$(find rplidar)/launch/rplidar_a2m8.launch"/>
+
+     <!-- gmapping-->
+     <!-- <include file="$(find noor_gmapping)/launch/gmapping.launch"/> -->
+
+
+     <!-- Navigation-->
+     <!-- <include file="$(find noor_navigation)/launch/noor_navigation.launch"/> -->
+
 
   
 </launch>

@@ -1,0 +1,26 @@
+local_costmap:
+  track_unknown_space: false
+
+
+  #Set the global and robot frames for the costmap
+  global_frame: odom
+  robot_base_frame: base_footprint
+
+  #Set the update and publish frequency of the costmap
+  update_frequency: 10.0 # before 0.7,7,15
+  publish_frequency: 10.0 # before 0.5,5
+  transform_tolerance: 2.5  #2.5
+  resolution: 0.025 #3.5
+
+  #We'll configure this costmap to be a rolling window... meaning it is always
+  #centered at the robot
+  rolling_window: true
+  width: 10.0
+  height: 10.0
+  
+  plugins:
+    - {name: laser_layer,         type: "costmap_2d::ObstacleLayer"} 
+    # - {name: rgbd_obstacle_layer,     type: "spatio_temporal_voxel_layer/SpatioTemporalVoxelLayer"}
+    - {name: inflation_layer,     type: "costmap_2d::InflationLayer"}   
+
+   

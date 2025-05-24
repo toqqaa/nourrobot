@@ -1,0 +1,7 @@
+rotate_recovery:
+  max_rotational_speed: 0.80  # Limit speed during recovery
+  min_rotational_speed: 0.2
+  # acc_lim_theta: 1.5
+  # sim_granularity: 0.0175
+  # yaw_goal_tolerance: 0.1  # Stop rotation sooner if no path is found
+  # frequency: 10.0
