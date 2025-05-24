@@ -23,7 +23,7 @@
     <rosparam file="$(find noor_navigation)/config/move_base_params.yaml" command="load" />
     <rosparam file="$(find noor_navigation)/config/global_planner_params.yaml" command="load" /> 
     <rosparam file="$(find noor_navigation)/config/dwa_local_planner_params.yaml" command="load" />
-        <rosparam file="$(find noor_navigation)/config/rotate_recovery.yaml" command="load" />
+    <rosparam file="$(find noor_navigation)/config/rotate_recovery.yaml" command="load" />
 
     
     

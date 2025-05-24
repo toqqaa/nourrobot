@@ -1,0 +1,13 @@
+<launch>
+    <!-- RealSense Camera -->
+   
+  
+    <!-- Detection Node -->
+    <node name="person_detector" pkg="ai_detection" type="camera_detection.py" output="screen">
+      <param name="confidence_threshold" value="0.7" />
+    </node>
+  
+    <node name="image_view" pkg="image_view" type="image_view">
+      <remap from="image" to="/processed_image" />
+    </node>
+  </launch>
